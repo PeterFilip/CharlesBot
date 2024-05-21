@@ -1,5 +1,7 @@
-# ignore big model files in speech_transcription/models directory
+  # ignore big model files in speech_transcription/models directory
 external-services/speech-transcription/models/
+
+out.mp4
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
