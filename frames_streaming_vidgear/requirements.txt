@@ -1,0 +1,6 @@
+opencv-python-headless
+vidgear
+pyzmq
+simplejpeg
+msgpack_numpy
+tornado>=6.1
