@@ -84,3 +84,5 @@ if __name__ == "__main__":
 # TODO: add endpoints to flush/delete streams
 # TODO: add item expiration so that after x times the frames start getting deleted
     #-add endpoints to modify existing streams' params like expiration time
+
+# TODO: have args in consume endpoint to delete frames upon consumption

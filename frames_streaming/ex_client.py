@@ -36,9 +36,7 @@ class StreamClient:
             video_frame = await self.video_consumer_ws.recv()
             nparr = np.frombuffer(video_frame, np.uint8)
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-            cv2.imshow('Received Video', img)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            yield img
 
 async def video_producer(client):
     cap = cv2.VideoCapture('vid.mp4')
@@ -56,15 +54,21 @@ async def video_producer(client):
     while True:
         ret, frame = cap.read()
         if not ret:
-            print("End of video reached. Restarting from beginning.")
+            print("End of video reached.")
             cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            continue
+            break
 
         _, buffer = cv2.imencode('.jpg', frame)
         await client.push_video_frame(buffer.tobytes())
         await asyncio.sleep(delay)
 
     cap.release()
+
+async def display_frames(frame_generator):
+    async for frame in frame_generator:
+        cv2.imshow('Received Video', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 async def main():
     client = StreamClient("http://localhost:8000")
@@ -74,14 +78,18 @@ async def main():
         await client.connect_video_consumer()
 
         producer_task = asyncio.create_task(video_producer(client))
-        consumer_task = asyncio.create_task(client.consume_video_frames())
+        consumer_task = asyncio.create_task(display_frames(client.consume_video_frames()))
 
         await asyncio.gather(producer_task, consumer_task)
     except Exception as e:
         print(f"An error occurred: {e}")
-
-
-
+    finally:
+        if 'cv2' in globals() and hasattr(cv2, 'destroyAllWindows'):
+            cv2.destroyAllWindows()
+        if client.video_producer_ws:
+            await client.video_producer_ws.close()
+        if client.video_consumer_ws:
+            await client.video_consumer_ws.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
