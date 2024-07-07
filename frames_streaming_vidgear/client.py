@@ -3,8 +3,8 @@ import cv2
 import numpy as np
 
 # Define NetGear client with compression enabled
-options = {'compression_param': cv2.IMWRITE_JPEG_QUALITY, 'compression_quality': 50}  # Adjust quality as needed
-client = NetGear(address='127.0.0.1', port='5454', protocol='tcp', pattern=0, logging=True, **options)
+options = {'compression_param': cv2.IMWRITE_JPEG_QUALITY, 'compression_quality': 50, "jpeg_compression": True}  # Adjust quality as needed
+client = NetGear(address='127.0.0.1', port='5454', protocol='tcp', pattern=1, logging=True, **options)
 
 # Open the video source
 video_stream = cv2.VideoCapture('vid.mp4')
@@ -27,4 +27,4 @@ client.send(end_frame)
 
 # Release resources
 video_stream.release()
-client.close()
+# client.close()  # NOTE: this sends signal to server to terminate and not receive connections from client(s) again in the future

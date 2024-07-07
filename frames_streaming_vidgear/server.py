@@ -3,8 +3,8 @@ import cv2
 import numpy as np
 
 # Define NetGear server with compression enabled
-options = {'compression_param': cv2.IMWRITE_JPEG_QUALITY, 'compression_quality': 50}  # Ensure consistency with client
-server = NetGear(address='127.0.0.1', port='5454', protocol='tcp', pattern=0, receive_mode=True, logging=True, **options)
+options = {'compression_param': cv2.IMWRITE_JPEG_QUALITY, 'compression_quality': 50, "jpeg_compression": True, "multiclient_mode":True}  # Ensure consistency with client
+server = NetGear(address='127.0.0.1', port='5454', protocol='tcp', pattern=1, receive_mode=True, logging=True, timeout=999999, **options)
 
 # Open video writer
 output_stream = None
